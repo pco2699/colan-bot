@@ -1,5 +1,6 @@
 from flask import Flask, request, abort
-
+import os
+from dotenv import load_dotenv, find_dotenv
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -9,13 +10,15 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
-import os
+load_dotenv(find_dotenv())
+
+CHANNEL_SECRET = os.environ["CHANNEL_SECRET"]
+CHANNEL_ACCESS_TOKEN = os.environ["CHANNEL_ACCESS_TOKEN"]
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi(os.environ['CHANNEL_ACCESS_TOKEN'])
-handler = WebhookHandler(os.envrion['CHANNEL_SECRET'])
-
+line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(CHANNEL_SECRET)
 
 @app.route("/callback", methods=['POST'])
 def callback():
