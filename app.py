@@ -28,9 +28,6 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
-from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
-
 
 app = Flask(__name__)
 
