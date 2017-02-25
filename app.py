@@ -17,6 +17,7 @@ from __future__ import unicode_literals
 import os
 import sys
 import random
+import json
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
@@ -94,7 +95,7 @@ def callback():
         if event.source.type != 'user':
             continue
         
-        print(event.source)
+        print(json.loads(event.source))
         # DBからuseridを検索してくる
         userinfo = UserInfo.query.filter_by(user_id=event.source.userId).first()
         
