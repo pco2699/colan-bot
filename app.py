@@ -29,8 +29,11 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+db = SQLAlchemy(app)
 
 port = os.getenv('PORT', 8000)
 
@@ -46,14 +49,21 @@ if channel_access_token is None:
 
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
-state = 'Hoge'
+ 
+class UserInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(30))
+    mode = db.Column(db.Integer)
+    
+    def __init__(self, user_id, mode):
+        self.mode = mode
+        self.user_id = user_id
 
 
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
 
-    print(state)
 
     # get request body as text
     body = request.get_data(as_text=True)
@@ -80,7 +90,7 @@ def callback():
             continue
         if not isinstance(event.message, TextMessage):
             continue
-        state = "Geff"
+        
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=random.choice(texts))
