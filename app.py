@@ -16,6 +16,7 @@ from __future__ import unicode_literals
 
 import os
 import sys
+import random
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
@@ -54,6 +55,14 @@ def callback():
     # get request body as text
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
+    texts = ['アウーズビッラーヒ　ミナッシャイフォーニャッラジーム', 'アルハムドゥリッラーヒ　ラッビルアーラミーン',
+             'アーッラハマーニッラヒーム', 'マーリキ　ヤウミッディーン', 'イィヤーカナアブドゥ　ワイィヤーカナスタイーン',
+             'イヒディナッスィラータ（ル）　ムスタキーム', 'スィラータッラズィーナ アンアムタアライヒーム '
+             + 'ガイ（ル）リィルマグドゥービ　アライヒーム ワラッ　ダァーーッリーーィン',
+             'アーメン']
+    alabia = ['بِسْمِ اللّهِ الرَّحْمـَنِ الرَّحِيم', 'الْحَمْدُ للّهِ رَبِّ الْعَالَمِين', 'الرَّحمـنِ الرَّحِيم'
+              'مَـالِكِ يَوْمِ الدِّين', 'إِيَّاك نَعْبُدُ وإِيَّاكَ نَسْتَعِين', 'اهدِنَــــا الصِّرَاطَ المُستَقِيمَ',
+              'صِرَاطَ الَّذِينَ أَنعَمتَ عَلَيهِمْ غَيرِ المَغضُوبِ عَلَيهِمْ وَلاَ الضَّالِّين', 'آمين']
 
     # parse webhook body
     try:
@@ -70,7 +79,7 @@ def callback():
 
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="ラーイラーハ イッラッラー、ムハンマド ラスールッラー")
+            TextSendMessage(text=random.choice(texts))
         )
 
     return 'OK'
