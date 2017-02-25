@@ -33,6 +33,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 port = os.getenv('PORT', 8000)
@@ -90,10 +91,39 @@ def callback():
             continue
         if not isinstance(event.message, TextMessage):
             continue
+        if event.source.type != 'user':
+            continue
+        
+        print(event.source.userId)
+        # DBからuseridを検索してくる
+        userinfo = UserInfo.query.filter_by(user_id=event.source.userId).first()
+        
+        # もしなければDBに登録
+        if userinfo is None:
+            regist_user = UserInfo(event.source.userId, 0)
+            db.session.add(regist_user)
+            obj = texts
+        
+        # ある場合はmodeを選択
+        else:
+            if userinfo.mode == 1:
+                obj = texts
+            else:
+                obj = alabia
+                
+            # アラビア, 日本語の場合モード切り替え
+            if event.message.text == 'アラビア':
+                userinfo.mode = 0
+                obj = alabia
+            elif event.message.text == '日本語':
+                userinfo.mode = 1
+                obj = texts
+                
+        db.session.commit()
         
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=random.choice(texts))
+            TextSendMessage(text=random.choice(obj))
         )
 
     return 'OK'
