@@ -51,7 +51,8 @@ if channel_access_token is None:
 
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
- 
+
+
 class UserInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(30))
@@ -65,7 +66,6 @@ class UserInfo(db.Model):
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
-
 
     # get request body as text
     body = request.get_data(as_text=True)
@@ -95,29 +95,30 @@ def callback():
         if event.source.type != 'user':
             continue
         
-        print(event.source)
+        print(event.source.userId)
+        get_id = event.source.userId
         # DBからuseridを検索してくる
-        userinfo = UserInfo.query.filter_by(user_id=event.source.userId).first()
+        user_info = UserInfo.query.filter_by(user_id=get_id).first()
         
         # もしなければDBに登録
-        if userinfo is None:
+        if user_info is None:
             regist_user = UserInfo(event.source.userId, 0)
             db.session.add(regist_user)
             obj = texts
         
         # ある場合はmodeを選択
         else:
-            if userinfo.mode == 1:
+            if user_info.mode == 1:
                 obj = texts
             else:
                 obj = alabia
                 
             # アラビア, 日本語の場合モード切り替え
             if event.message.text == 'アラビア':
-                userinfo.mode = 0
+                user_info.mode = 0
                 obj = alabia
             elif event.message.text == '日本語':
-                userinfo.mode = 1
+                user_info.mode = 1
                 obj = texts
                 
         db.session.commit()
