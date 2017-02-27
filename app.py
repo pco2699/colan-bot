@@ -133,6 +133,16 @@ def callback():
                 event.reply_token,
                 TextSendMessage(text=mean[user_info.last_one])
             )
+        elif event.message.text == '日本語では？':
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=texts[user_info.last_one])
+            )
+        elif event.message.text == 'アラビア語では？':
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=alabia[user_info.last_one])
+            )
         else:
             rand = random.randint(0, len(obj)-1)
             line_bot_api.reply_message(
