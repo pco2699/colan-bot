@@ -57,10 +57,12 @@ class UserInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(100))
     mode = db.Column(db.Integer)
+    last_one = db.Column(db.Integer)
     
-    def __init__(self, user_id, mode):
+    def __init__(self, user_id, mode, last_one):
         self.mode = mode
         self.user_id = user_id
+        self.last_one = last_one
 
 
 @app.route("/callback", methods=['POST'])
@@ -78,7 +80,11 @@ def callback():
     alabia = ['بِسْمِ اللّهِ الرَّحْمـَنِ الرَّحِيم', 'الْحَمْدُ للّهِ رَبِّ الْعَالَمِين', 'الرَّحمـنِ الرَّحِيم'
               'مَـالِكِ يَوْمِ الدِّين', 'إِيَّاك نَعْبُدُ وإِيَّاكَ نَسْتَعِين', 'اهدِنَــــا الصِّرَاطَ المُستَقِيمَ',
               'صِرَاطَ الَّذِينَ أَنعَمتَ عَلَيهِمْ غَيرِ المَغضُوبِ عَلَيهِمْ وَلاَ الضَّالِّين', 'آمين']
-
+    mean = ['神の御名の下に最高の慈悲を', '全ての感謝は世界の神アッラーただ一人へ', 'アッラーは最高の慈悲を持ち',
+            '最後の審判の日の支配者である', '我々はあなたのみを崇拝し、あなたのみに助けを求める',
+            '我々全てを正しい道に導きたまえ',
+            'あなたの怒りを与えられた者や自分の道を見失った者ではなく、あなたの恩寵を授けられた者の道',
+            'アーメン']
     # parse webhook body
     try:
         events = parser.parse(body, signature)
@@ -102,7 +108,7 @@ def callback():
         
         # もしなければDBに登録
         if user_info is None:
-            regist_user = UserInfo(event.source.sender_id, 0)
+            regist_user = UserInfo(event.source.sender_id, 0, 0)
             db.session.add(regist_user)
             obj = texts
         
@@ -120,13 +126,28 @@ def callback():
             elif event.message.text == '日本語':
                 user_info.mode = 1
                 obj = texts
+            
                 
-        db.session.commit()
+        if event.message.text == '意味は？':
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=mean[user_info.last_one])
+            )
+        else:
+            rand = random.randint(0, len(obj)-1)
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=obj[rand])
+            )
+            user_info.last_one = rand
         
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=random.choice(obj))
-        )
+        db.session.commit()
+
+            
+            
+
+        
+        
 
     return 'OK'
 
