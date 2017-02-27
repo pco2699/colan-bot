@@ -108,8 +108,8 @@ def callback():
         
         # もしなければDBに登録
         if user_info is None:
-            regist_user = UserInfo(event.source.sender_id, 0, 0)
-            db.session.add(regist_user)
+            user_info = UserInfo(event.source.sender_id, 0, 0)
+            db.session.add(user_info)
             obj = texts
         
         # ある場合はmodeを選択
