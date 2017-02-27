@@ -120,15 +120,15 @@ def callback():
                 obj = alabia
                 
             # アラビア, 日本語の場合モード切り替え
-            if event.message.text == 'アラビア':
+            if event.message.text == 'アラビア語モード':
                 user_info.mode = 0
                 obj = alabia
-            elif event.message.text == '日本語':
+            elif event.message.text == '日本語モード':
                 user_info.mode = 1
                 obj = texts
             
                 
-        if event.message.text == '意味は？':
+        if event.message.text == '意味は？' or event.message.text == 'どういう意味？':
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=mean[user_info.last_one])
