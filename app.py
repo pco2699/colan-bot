@@ -95,8 +95,8 @@ def callback():
         if event.source.type != 'user':
             continue
         
-        print(event.source.userId)
-        get_id = event.source.userId
+        print(event.source.sender_id)
+        get_id = event.source.sender_id
         # DBからuseridを検索してくる
         user_info = UserInfo.query.filter_by(user_id=get_id).first()
         
