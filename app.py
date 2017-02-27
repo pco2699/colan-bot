@@ -55,7 +55,7 @@ parser = WebhookParser(channel_secret)
 
 class UserInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(30))
+    user_id = db.Column(db.String(100))
     mode = db.Column(db.Integer)
     
     def __init__(self, user_id, mode):
