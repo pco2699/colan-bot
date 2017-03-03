@@ -14,4 +14,4 @@
 
 # LINE BOT ID
 @xyd8591i  
-![LINE ID](http://qr-official.line.me/M/VDTXxJDTtn.png "LINE")
+http://qr-official.line.me/M/VDTXxJDTtn.png
